@@ -14,7 +14,9 @@ class window.Neat.Renderer.Basic
   findViewForModel: (model)->
     @views[@_indexOfViewForModel(model)]
 
-
+  afterRender: (callback) ->
+    @afterRenderObservers ?= []
+    @afterRenderObservers.push callback
 
   _render: ->
     # Doesn't need to render anything else like pagination controls on the view
@@ -41,6 +43,9 @@ class window.Neat.Renderer.Basic
         @_moveView(viewIndex, index) unless viewIndex is index
       else
         @_insertView @view.buildViewFor(model), index
+
+    if @afterRenderObservers
+      callback() for callback in @afterRenderObservers
     @
 
   _insertView: (view, newIndex) ->
